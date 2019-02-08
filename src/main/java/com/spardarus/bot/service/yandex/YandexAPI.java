@@ -1,6 +1,8 @@
 package com.spardarus.bot.service.yandex;
 
 
+import com.spardarus.bot.config.Properties;
+import com.spardarus.bot.dbo.Weather;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -14,80 +16,126 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.spardarus.bot.config.Proxy.getProxyHttpHost;
 
 public class YandexAPI {
 
-    private static final String HOST_WEATHER="api.weather.yandex.ru/v1";
-    private static final String PATH_WEATHER="/forecast";
-    private static final String HOST_TRANSLATE="translate.yandex.net";
-    private static final String PATH_TRANSLATE="/api/v1.5/tr.json/translate";
-
-private List<NameValuePair> getWeatherParams(){
-    List<NameValuePair> weatherParams=new ArrayList<>();
-    weatherParams.add(new Parameter("lat", "51.533103"));
-    weatherParams.add(new Parameter("lon", "46.034158"));
-    weatherParams.add(new Parameter("lang", "\"ru_RU\""));
-    weatherParams.add(new Parameter("limit", "1"));
-    weatherParams.add(new Parameter("hours", "false"));
-    weatherParams.add(new Parameter("extra", "false"));
-    return weatherParams;
-}
-
-    private List<NameValuePair> getTranslateParams(){
-        List<NameValuePair> weatherParams=new ArrayList<>();
-        weatherParams.add(new Parameter("lang", "en-ru"));
-        weatherParams.add(new Parameter("key", "trnsl.1.1.20190130T092751Z.120a53b75f8c4046.0a58915d6e790d4b83b4f05d45617f12cd2cd74f"));
+    private List<NameValuePair> getWeatherParams() {
+        List<NameValuePair> weatherParams = new ArrayList<>();
+        weatherParams.add(new Parameter("lat", "51.533103"));
+        weatherParams.add(new Parameter("lon", "46.034158"));
+        weatherParams.add(new Parameter("lang", "\"ru_RU\""));
+        weatherParams.add(new Parameter("limit", "1"));
+        weatherParams.add(new Parameter("hours", "false"));
+        weatherParams.add(new Parameter("extra", "false"));
         return weatherParams;
     }
 
-private URI getURI(String host, String path, List<NameValuePair> params){
-    URI uri = null;
-    try {
-        uri = new URIBuilder()
-                .setScheme("https")
-                .setHost(host)
-                .setPath(path)
-                .setParameters(params)
-                .build();
-    } catch (URISyntaxException e) {
-        e.printStackTrace();
+    private List<NameValuePair> getDetectTranslateParams() {
+        List<NameValuePair> translateParams = new ArrayList<>();
+        translateParams.add(new Parameter("key", Properties.getProperty("X-Yandex-API-Key-Translate")));
+        translateParams.add(new Parameter("hint", "ru,en"));
+        return translateParams;
     }
-    return  uri;
-}
-    public Weather getWeather(){
+
+    private List<NameValuePair> getTranslateParamsWithLang(String currentLang) {
+        String lang = "ru-en";
+        if (!currentLang.equals("ru") && !currentLang.equals("")) {
+            lang = currentLang + "-ru";
+        }
+        List<NameValuePair> translateParams = new ArrayList<>();
+        translateParams.add(new Parameter("lang", lang));
+        translateParams.add(new Parameter("key", Properties.getProperty("X-Yandex-API-Key-Translate")));
+        return translateParams;
+    }
+
+
+    private URI getURI(String host, String path, List<NameValuePair> params) {
+        URI uri = null;
         try {
-            URI uri = getURI(HOST_WEATHER,PATH_WEATHER,getWeatherParams());
-            HttpGet httpGet = new HttpGet(uri);
-            httpGet.setHeader("X-Yandex-API-Key", "802beaae-6082-4f25-ac28-e246e5a0d633");
-            HttpClient client = HttpClientBuilder.create().setProxy(getProxyHttpHost()).build();//proxy
-          //  HttpClient client = HttpClientBuilder.create().build();//without proxy
-            HttpResponse response = client.execute(httpGet);
+            uri = new URIBuilder()
+                    .setScheme("https")
+                    .setHost(host)
+                    .setPath(path)
+                    .setParameters(params)
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return uri;
+    }
+
+    private HttpResponse getHttpResponseGet(String host, String path, List<NameValuePair> params, Map<String,String> headers) {
+        HttpResponse response=null;
+        URI uri = getURI(host, path, params);
+        HttpGet httpGet = new HttpGet(uri);
+        for(String key:headers.keySet()){
+            httpGet.setHeader(key,headers.get(key));
+        }
+        HttpClient client = HttpClientBuilder.create().setProxy(getProxyHttpHost()).build();//proxy
+        //  HttpClient client = HttpClientBuilder.create().build();//without proxy
+        try {
+            response = client.execute(httpGet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    private HttpResponse getHttpResponsePost(String host, String path, List<NameValuePair> params, Map<String,String> headers,String body) {
+        HttpResponse response=null;
+        URI uri = getURI(host, path, params);
+        HttpPost httpPost = new HttpPost(uri);
+        try {
+            httpPost.setEntity(new StringEntity("text=" + body));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        for(String key:headers.keySet()){
+            httpPost.setHeader(key,headers.get(key));
+        }
+        HttpClient client = HttpClientBuilder.create().setProxy(getProxyHttpHost()).build();//proxy
+        //  HttpClient client = HttpClientBuilder.create().build();//without proxy
+        try {
+            response = client.execute(httpPost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    public Weather getWeather() {
+        try {
+            Map<String,String> headers=new HashMap<>();
+            headers.put("X-Yandex-API-Key",Properties.getProperty("X-Yandex-API-Key"));
+            HttpResponse response = getHttpResponseGet("api.weather.yandex.ru/v1", "/forecast", getWeatherParams(),headers);
             if (response.getStatusLine().getStatusCode() == 200) {
-                HttpEntity entity=response.getEntity();
-                if (entity != null){
-                    Weather weather=new Weather();
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    Weather weather = new Weather();
                     String jsonString = EntityUtils.toString(entity);
                     JSONObject jsonResponse = new JSONObject(jsonString); //Convert String to JSON Object
-                    JSONObject fact=jsonResponse.getJSONObject("fact");
+                    JSONObject fact = jsonResponse.getJSONObject("fact");
                     weather.setTemp(fact.get("temp").toString());
                     weather.setFeelsLike(fact.get("feels_like").toString());
                     weather.setCondition(fact.getString("condition"));
-                    weather.setIcon("https://yastatic.net/weather/i/icons/blueye/color/svg/"+
-                            fact.getString("icon")+
-                    ".svg");
-
+                    weather.setIcon("https://yastatic.net/weather/i/icons/blueye/color/svg/" +
+                            fact.getString("icon") +
+                            ".svg");
                     return weather;
-                }else{
+                } else {
                     System.out.println("Response entity is null");
                 }
-            }else
-            {
+            } else {
                 System.out.println("Status api is not 200");
             }
         } catch (Exception e) {
@@ -97,30 +145,49 @@ private URI getURI(String host, String path, List<NameValuePair> params){
         return null;
     }
 
-    public String getTranslateText(String text){
+    private String detectLang(String text) {
         try {
-            URI uri = getURI(HOST_TRANSLATE,PATH_TRANSLATE,getTranslateParams());
-            HttpPost httpPost = new HttpPost(uri);
-
-            StringEntity params =new StringEntity("text="+text);
-            httpPost.addHeader("content-type", "application/x-www-form-urlencoded");
-            httpPost.addHeader("Accept", "*/*");
-            httpPost.setEntity(params);
-            HttpClient client = HttpClientBuilder.create().setProxy(getProxyHttpHost()).build();//proxy
-            //  HttpClient client = HttpClientBuilder.create().build();//without proxy
-            HttpResponse response = client.execute(httpPost);
+            Map<String,String> headers=new HashMap<>();
+            headers.put("content-type","application/x-www-form-urlencoded");
+            headers.put("Accept","*/*");
+            HttpResponse response = getHttpResponsePost("translate.yandex.net","/api/v1.5/tr.json/detect", getDetectTranslateParams(),headers,text);
             if (response.getStatusLine().getStatusCode() == 200) {
-                HttpEntity entity=response.getEntity();
-                if (entity != null){
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
                     String jsonString = EntityUtils.toString(entity);
                     JSONObject jsonResponse = new JSONObject(jsonString); //Convert String to JSON Object
-                    JSONArray jsonArray=jsonResponse.getJSONArray("text");
-                    return jsonArray.getString(0);
-                }else{
+                    return jsonResponse.getString("lang");
+                } else {
                     System.out.println("Response entity is null");
                 }
-            }else
-            {
+            } else {
+                System.out.println("Status api is not 200");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("ERROR CONNECTING FOR API");
+        return "@BOT is not Translate your message";
+
+    }
+
+    public String getTranslateText(String text) {
+        try {
+            Map<String,String> headers=new HashMap<>();
+            headers.put("content-type","application/x-www-form-urlencoded");
+            headers.put("Accept","*/*");
+            HttpResponse response = getHttpResponsePost("translate.yandex.net","/api/v1.5/tr.json/translate", getTranslateParamsWithLang(detectLang(text)),headers,text);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    String jsonString = EntityUtils.toString(entity);
+                    JSONObject jsonResponse = new JSONObject(jsonString); //Convert String to JSON Object
+                    JSONArray jsonArray = jsonResponse.getJSONArray("text");
+                    return jsonArray.getString(0);
+                } else {
+                    System.out.println("Response entity is null");
+                }
+            } else {
                 System.out.println("Status api is not 200");
             }
         } catch (Exception e) {
@@ -130,7 +197,7 @@ private URI getURI(String host, String path, List<NameValuePair> params){
         return "@BOT is not Translate your message";
     }
 
-    class Parameter implements NameValuePair{
+    class Parameter implements NameValuePair {
         private String name;
         private String value;
 

@@ -1,0 +1,6 @@
+*.properties
+*.iml
+*.txt
+.idea/*
+META-INF/*
+target/*
