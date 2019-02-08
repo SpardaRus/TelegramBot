@@ -32,7 +32,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.spardarus.com.spardarus.bot.Application</mainClass>
+                            <mainClass>com.spardarus.bot.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,11 +96,7 @@ public class YandexAPI {
         HttpResponse response=null;
         URI uri = getURI(host, path, params);
         HttpPost httpPost = new HttpPost(uri);
-        try {
-            httpPost.setEntity(new StringEntity("text=" + body));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        httpPost.setEntity(new StringEntity("text=" +body, "utf-8"));
         for(String key:headers.keySet()){
             httpPost.setHeader(key,headers.get(key));
         }
@@ -148,7 +145,7 @@ public class YandexAPI {
     private String detectLang(String text) {
         try {
             Map<String,String> headers=new HashMap<>();
-            headers.put("content-type","application/x-www-form-urlencoded");
+            headers.put("Content-Type","application/x-www-form-urlencoded");
             headers.put("Accept","*/*");
             HttpResponse response = getHttpResponsePost("translate.yandex.net","/api/v1.5/tr.json/detect", getDetectTranslateParams(),headers,text);
             if (response.getStatusLine().getStatusCode() == 200) {
