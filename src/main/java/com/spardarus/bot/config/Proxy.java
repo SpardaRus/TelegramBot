@@ -6,8 +6,8 @@ import org.telegram.telegrambots.bots.DefaultBotOptions;
 
 public class Proxy {
     // https://hidemyna.me/ru/proxy-list/
-      private static final String proxyHost="62.4.16.163";//62.4.16.163
-      private static final int proxyPort=3128;
+      private static final String proxyHost=Properties.getProperty("proxyHost");
+      private static final int proxyPort=Integer.parseInt(Properties.getProperty("proxyPort"));
 
     public static HttpHost getProxyHttpHost(){
         return new HttpHost(proxyHost, proxyPort);
