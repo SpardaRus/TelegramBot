@@ -3,7 +3,7 @@ package com.spardarus.bot.service;
 import com.spardarus.bot.bot.TrafficBot;
 import com.spardarus.bot.dbo.Weather;
 import com.spardarus.bot.service.yandex.YandexAPI;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -24,7 +24,7 @@ public class Commands {
             SendMessage message = new SendMessage()
                     .setChatId(update.getMessage().getChatId())
                     .setReplyMarkup(getKeyboard());
-            System.out.print("id:"+message.getChatId()+" ");
+            System.out.print("id:"+message.getChatId()+", contact: "+update.getMessage().getChat().getFirstName()+", ");
             String text=update.getMessage().getText();
             if(text.equals(commands.get("1"))){
                 message.setText(getCurrentTemperature());
@@ -36,6 +36,7 @@ public class Commands {
                 }
             }
             try {
+                if(message.getText() !=null)
                 new TrafficBot().execute(message);
             } catch (TelegramApiException te) {
                 te.printStackTrace();
@@ -66,8 +67,7 @@ public class Commands {
         return "Погода в саратове сегодня \uD83D\uDD2E\n" +
                 "Температура: "+weather.getTemp()+"℃"+
                 "\nТемпература по ощущению: "+weather.getFeelsLike()+"℃"+
-                "\nСейчас погода: "+weather.getCondition()
-                ;//+"\n"+weather.getIcon();
+                "\nСейчас погода: "+weather.getCondition();
     }
     private String getTranslateMessage(String text){
         System.out.println("getTranslateMessage()");
