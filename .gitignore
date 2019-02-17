@@ -1,6 +1,8 @@
 *.properties
 *.iml
 *.txt
+*.log
+*.out
 .idea/*
 META-INF/*
 target/*

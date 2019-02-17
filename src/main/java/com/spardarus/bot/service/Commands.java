@@ -1,8 +1,10 @@
 package com.spardarus.bot.service;
 
-import com.spardarus.bot.bot.TrafficBot;
+import com.spardarus.bot.bot.ToolBot;
 import com.spardarus.bot.dbo.Weather;
 import com.spardarus.bot.service.yandex.YandexAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -12,6 +14,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.*;
 
 public class Commands {
+    private String idAndContact=" ";
+    private static final Logger log = LoggerFactory.getLogger("com.spardarus.bot");
     private static Map<String,String> commands=new HashMap<>();
     static{
         commands.put("1","☀Погода");
@@ -24,7 +28,7 @@ public class Commands {
             SendMessage message = new SendMessage()
                     .setChatId(update.getMessage().getChatId())
                     .setReplyMarkup(getKeyboard());
-            System.out.print("id:"+message.getChatId()+", contact: "+update.getMessage().getChat().getFirstName()+", ");
+            idAndContact="id:"+message.getChatId()+", contact: "+update.getMessage().getChat().getFirstName()+", ";
             String text=update.getMessage().getText();
             if(text.equals(commands.get("1"))){
                 message.setText(getCurrentTemperature());
@@ -37,7 +41,7 @@ public class Commands {
             }
             try {
                 if(message.getText() !=null)
-                new TrafficBot().execute(message);
+                new ToolBot().execute(message);
             } catch (TelegramApiException te) {
                 te.printStackTrace();
             }
@@ -56,13 +60,13 @@ public class Commands {
         return keyboardMarkup;
     }
 
-    private static String getListCommand() {
-        System.out.println("getListCommand() ");
+    private String getListCommand() {
+        log.debug(""+idAndContact+"getListCommand()");
         return "Список команд:\n"+commands;
     }
 
     private String getCurrentTemperature() {
-        System.out.println("getCurrentTemperature()");
+        log.debug(""+idAndContact+"getCurrentTemperature()");
         Weather weather=new YandexAPI().getWeather();
         return "Погода в саратове сегодня \uD83D\uDD2E\n" +
                 "Температура: "+weather.getTemp()+"℃"+
@@ -70,10 +74,7 @@ public class Commands {
                 "\nСейчас погода: "+weather.getCondition();
     }
     private String getTranslateMessage(String text){
-        System.out.println("getTranslateMessage()");
+        log.debug(""+idAndContact+"getTranslateMessage()");
         return ""+new YandexAPI().getTranslateText(text);
-//                +
-//                "\nПереведено сервисом «Яндекс.Переводчик»\n"+
-//                "http://translate.yandex.ru/";
     }
 }

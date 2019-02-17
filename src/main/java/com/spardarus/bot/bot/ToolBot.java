@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.spardarus.bot.config.Proxy.buildBotOptions;
 
-public class TrafficBot extends TelegramLongPollingBot {
+public class ToolBot extends TelegramLongPollingBot {
 
-    public TrafficBot() {
+    public ToolBot() {
         super(buildBotOptions());
     }
 

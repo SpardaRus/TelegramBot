@@ -31,7 +31,6 @@ public class Weather {
     private String temp;
     private String feelsLike;
     private String condition;
-    private String icon;
 
     public String getCondition(){
         return mapConditions.get(condition);

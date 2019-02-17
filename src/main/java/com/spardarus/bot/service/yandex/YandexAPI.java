@@ -125,9 +125,6 @@ public class YandexAPI {
                     weather.setTemp(fact.get("temp").toString());
                     weather.setFeelsLike(fact.get("feels_like").toString());
                     weather.setCondition(fact.getString("condition"));
-                    weather.setIcon("https://yastatic.net/weather/i/icons/blueye/color/svg/" +
-                            fact.getString("icon") +
-                            ".svg");
                     return weather;
                 } else {
                     System.out.println("Response entity is null");
