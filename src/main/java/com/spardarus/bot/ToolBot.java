@@ -1,11 +1,11 @@
-package com.spardarus.bot.bot;
+package com.spardarus.bot;
 
-import com.spardarus.bot.config.Properties;
-import com.spardarus.bot.service.Commands;
+import com.spardarus.config.Properties;
+import com.spardarus.service.Commands;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static com.spardarus.bot.config.Proxy.buildBotOptions;
+import static com.spardarus.config.Proxy.buildBotOptions;
 
 public class ToolBot extends TelegramLongPollingBot {
 

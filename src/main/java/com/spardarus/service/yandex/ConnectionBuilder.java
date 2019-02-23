@@ -1,6 +1,7 @@
-package com.spardarus.bot.service.yandex;
+package com.spardarus.service.yandex;
 
-import com.spardarus.bot.config.Properties;
+import com.spardarus.config.Properties;
+import com.spardarus.config.Proxy;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -9,6 +10,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,10 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.spardarus.bot.config.Proxy.getProxyHttpHost;
-
 public class ConnectionBuilder {
-
+    private final static Logger log= LoggerFactory.getLogger("com.spardarus.bot");
     private List<NameValuePair> getWeatherParams() {
         List<NameValuePair> weatherParams = new ArrayList<>();
         weatherParams.add(new Parameter("lat", "51.533103"));
@@ -94,7 +95,7 @@ public class ConnectionBuilder {
                     .setParameters(params)
                     .build();
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            log.error("URI fail connect, becuase: \n"+e.getStackTrace());
         }
         return uri;
     }
@@ -106,12 +107,12 @@ public class ConnectionBuilder {
         for (String key : headers.keySet()) {
             httpGet.setHeader(key, headers.get(key));
         }
-        HttpClient client = HttpClientBuilder.create().setProxy(getProxyHttpHost()).build();//proxy
+        HttpClient client = HttpClientBuilder.create().setProxy(Proxy.getProxyHttpHost()).build();//proxy
         //  HttpClient client = HttpClientBuilder.create().build();//without proxy
         try {
             response = client.execute(httpGet);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("HttpResponseGet fail connect, becuase: \n"+e.getStackTrace());
         }
         return response;
     }
@@ -124,12 +125,12 @@ public class ConnectionBuilder {
         for (String key : headers.keySet()) {
             httpPost.setHeader(key, headers.get(key));
         }
-        HttpClient client = HttpClientBuilder.create().setProxy(getProxyHttpHost()).build();//proxy
+        HttpClient client = HttpClientBuilder.create().setProxy(Proxy.getProxyHttpHost()).build();//proxy
         //  HttpClient client = HttpClientBuilder.create().build();//without proxy
         try {
             response = client.execute(httpPost);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("HttpResponsePost fail connect, becuase: \n"+e.getStackTrace());
         }
         return response;
     }

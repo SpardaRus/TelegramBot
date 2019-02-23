@@ -1,4 +1,4 @@
-package com.spardarus.bot.config;
+package com.spardarus.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;

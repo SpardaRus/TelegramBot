@@ -1,4 +1,4 @@
-package com.spardarus.bot.dbo;
+package com.spardarus.dbo;
 import lombok.Data;
 
 import java.util.HashMap;

@@ -1,14 +1,18 @@
-package com.spardarus.bot.service.yandex;
+package com.spardarus.service.yandex;
 
-import com.spardarus.bot.dbo.Weather;
+import com.spardarus.dbo.Weather;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class YandexAPI {
-
+    private final static Logger log= LoggerFactory.getLogger("com.spardarus.bot");
     private ConnectionBuilder connectionBuilder = new ConnectionBuilder();
 
     public Weather getWeather() {
@@ -36,23 +40,23 @@ public class YandexAPI {
                 });
     }
 
-    private Object getProperty(HttpResponse response, Parser parser) {
+    private Object getProperty(HttpResponse response, Parsable parsable) {
         try {
             if (response.getStatusLine().getStatusCode() == 200) {
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     String jsonString = EntityUtils.toString(entity);
-                    return parser.getTagFromJSON(new JSONObject(jsonString));
+                    return parsable.getTagFromJSON(new JSONObject(jsonString));
                 } else {
-                    System.out.println("Response entity is null");
+                    log.error("Response entity is null");
                 }
             } else {
-                System.out.println("Status api is not 200");
+                log.error("Status api is not 200");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            log.error("Failed to pull properties: \n"+e.getStackTrace());
         }
-        System.out.println("ERROR CONNECTING FOR API");
+        log.error("ERROR CONNECTING FOR API");
         return "@BOT is not Translate your message";
     }
 

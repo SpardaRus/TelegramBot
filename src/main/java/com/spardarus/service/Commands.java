@@ -1,8 +1,8 @@
-package com.spardarus.bot.service;
+package com.spardarus.service;
 
-import com.spardarus.bot.bot.ToolBot;
-import com.spardarus.bot.dbo.Weather;
-import com.spardarus.bot.service.yandex.YandexAPI;
+import com.spardarus.bot.ToolBot;
+import com.spardarus.dbo.Weather;
+import com.spardarus.service.yandex.YandexAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.*;
@@ -43,7 +43,7 @@ public class Commands {
                 if(message.getText() !=null)
                 new ToolBot().execute(message);
             } catch (TelegramApiException te) {
-                te.printStackTrace();
+                log.error("TelegramApiException: \n"+te.getStackTrace());
             }
         }
     }

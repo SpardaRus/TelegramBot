@@ -42,6 +42,6 @@ appender("STDOUT", ConsoleAppender) {
     }
 }
 
-logger("com.spardarus.bot.Application", DEBUG, ["CONSOLE_OUT"], false)
+logger("Application", DEBUG, ["CONSOLE_OUT"], false)
 logger("com.spardarus.bot", DEBUG, ["DEBUG_INFO_FILE"], false)
 root(ERROR, ["STDOUT"])
