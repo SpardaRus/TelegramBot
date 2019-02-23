@@ -1,13 +1,23 @@
 # TelegramBot
 Telegram bot can translate and show weather
 
-VM options: -Dlogback.configurationFile=config/logback.groovy
+# Start bot 
+- Create application.properties  
+- Run start.bat  
+## start.bat
+For windows use start.bat   
+In the file, change the values:  
+1) WORK_DIR  
+2) INSTANCE_NAME
 
-config/application.properties
+## application.properties
+1) Create file 
+WORK_DIR/config/application.properties
 
-BotUsername=
-BotToken=
-X-Yandex-API-Key=
-X-Yandex-API-Key-Translate=
-proxyHost=
+2) Fill application.properties  
+BotUsername=  
+BotToken=  
+X-Yandex-API-Key=  
+X-Yandex-API-Key-Translate=  
+proxyHost=  
 proxyPort=
