@@ -1,7 +1,9 @@
 # TelegramBot
 Telegram bot
 
-application.properties
+VM options: -Dlogback.configurationFile=config/logback.groovy
+
+config/application.properties
 
 BotUsername=
 BotToken=

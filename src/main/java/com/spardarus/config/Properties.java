@@ -13,7 +13,7 @@ public class Properties {
     private static Map<String, String> properties = new HashMap();
 
     static {
-        try (FileReader application = new FileReader("src/main/resources/application.properties")) {
+        try (FileReader application = new FileReader("config/application.properties")) {
             Scanner scan = new Scanner(application);
             while (scan.hasNext()) {
                 StringBuilder line = new StringBuilder(scan.nextLine());
