@@ -4,5 +4,6 @@
 *.log
 *.out
 .idea/*
+*.gitignore
 META-INF/*
 target/*

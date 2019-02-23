@@ -5,7 +5,7 @@ Telegram bot can translate and show weather
 - Create application.properties  
 - Run start.bat  
 ## start.bat
-For windows use start.bat   
+For windows use start.bat in folder "script"  
 In the file, change the value:  
 - WORK_DIR  
 
