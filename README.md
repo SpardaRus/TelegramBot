@@ -1,5 +1,5 @@
 # TelegramBot
-Telegram bot
+Telegram bot can translate and show weather
 
 VM options: -Dlogback.configurationFile=config/logback.groovy
 
