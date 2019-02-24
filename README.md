@@ -27,3 +27,8 @@ For linux use start.sh and stop.sh in folder "bin"
 In the file, change the value:  
 - WORK_DIR 
 - JAVA_HOME
+## Build jar file
+Use maven plugin assembly
+1) Lifecycle -> clean
+2) Lifecycle -> install
+3) Plugins -> assembly -> single
