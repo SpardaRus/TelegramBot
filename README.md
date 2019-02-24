@@ -3,12 +3,8 @@ Telegram bot can translate and show weather
 
 # Start bot 
 - Create application.properties  
-- Run start.bat  
-## start.bat
-For windows use start.bat in folder "script"  
-In the file, change the value:  
-- WORK_DIR  
-
+- Run start script
+  
 ## application.properties
 1) Create file 
 WORK_DIR/config/application.properties
@@ -20,3 +16,14 @@ X-Yandex-API-Key=
 X-Yandex-API-Key-Translate=  
 proxyHost=  
 proxyPort=
+
+## Start script
+### Windows
+For windows use start.bat in folder "bin"  
+In the file, change the value:  
+- WORK_DIR  
+### Linux
+For linux use start.sh and stop.sh in folder "bin"  
+In the file, change the value:  
+- WORK_DIR 
+- JAVA_HOME
