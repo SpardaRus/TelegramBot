@@ -15,8 +15,8 @@ BotToken=
 X-Yandex-API-Key=  
 X-Yandex-API-Key-Translate=  
 proxyHost=  
-proxyPort=
-
+proxyPort=  
+ProxyEnable=
 ## Start script
 ### Windows
 For windows use start.bat in folder "bin"  

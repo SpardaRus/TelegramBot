@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.spardarus.config.Proxy.getHttpClient;
+
 public class ConnectionBuilder {
     private final static Logger log= LoggerFactory.getLogger("com.spardarus.bot");
     private List<NameValuePair> getWeatherParams() {
@@ -107,8 +109,7 @@ public class ConnectionBuilder {
         for (String key : headers.keySet()) {
             httpGet.setHeader(key, headers.get(key));
         }
-        HttpClient client = HttpClientBuilder.create().setProxy(Proxy.getProxyHttpHost()).build();//proxy
-        //  HttpClient client = HttpClientBuilder.create().build();//without proxy
+        HttpClient client = getHttpClient();
         try {
             response = client.execute(httpGet);
         } catch (IOException e) {
@@ -125,8 +126,7 @@ public class ConnectionBuilder {
         for (String key : headers.keySet()) {
             httpPost.setHeader(key, headers.get(key));
         }
-        HttpClient client = HttpClientBuilder.create().setProxy(Proxy.getProxyHttpHost()).build();//proxy
-        //  HttpClient client = HttpClientBuilder.create().build();//without proxy
+        HttpClient client = getHttpClient();
         try {
             response = client.execute(httpPost);
         } catch (IOException e) {
